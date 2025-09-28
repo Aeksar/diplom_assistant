@@ -3,13 +3,13 @@ from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from uuid import uuid4
 
-from config.settings import EMBEDDINGS_MODEL, QDRANT_URL
+from config import cfg
 
 
 class QdrantService:
     def __init__(self):
-        self.client = QdrantClient(url=QDRANT_URL)
-        self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDINGS_MODEL)
+        self.client = QdrantClient(url=cfg.QDRANT_URL)
+        self.embeddings = HuggingFaceEmbeddings(model_name=cfg.EMBEDDINGS_MODEL)
         self.collection_name = "diplom"
         if not self.client.collection_exists(self.collection_name):
             self.client.create_collection(
@@ -38,7 +38,7 @@ class QdrantService:
         relevant_docs = self.client.search(
             collection_name=self.collection_name,
             query_vector=self.embeddings.embed_query(query),
-            limit=5
+            limit=10
         )
         return_set = []
         for doc in relevant_docs:

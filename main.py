@@ -18,9 +18,7 @@ def build_graph():
         return {"context": retrieved_docs}
 
     def generate(state: State):
-        docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-        messages = llm.prompt.invoke({"question": state["question"], "context": docs_content})
-        response = llm.model.invoke(messages)
+        response = llm.generate(state)
         return {"answer": response.content}
     
 
@@ -31,8 +29,7 @@ def build_graph():
 
 def main():
     graph = build_graph()
-    Loader().load_local_data()
-
+    Loader().load_local_pdf()
     while True:
         question = input("Ask your quetion about diplom: ")
         result = graph.invoke({"question": question})
